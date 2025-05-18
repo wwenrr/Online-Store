@@ -1,0 +1,27 @@
+services:
+  training.mysql:
+    container_name: Training.MySQL
+    environment:
+      MYSQL_ROOT_PASSWORD: Password@1234
+      MYSQL_DATABASE: test
+      MYSQL_PASSWORD: Password@1234
+    volumes:
+      - "trainingdocker_data:/var/lib/mysql"
+    image: mysql
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin
+      restart: always
+      environment:
+        PMA_HOST: training.mysql
+        PMA_USER: root
+        PMA_PASSWORD: Password@1234
+      ports:
+        - "8001:80"
+
+volumes:
+  trainingdocker_data:
+    external: true

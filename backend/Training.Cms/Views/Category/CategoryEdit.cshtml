@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Chỉnh sửa danh mục";
+}
+
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Chỉnh sửa danh mục</h1>
+        <div class="border-bottom border-primary w-25 mx-auto my-3"></div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form method="post" action="/Category/CategoryEditAction" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="@ViewBag.Id">
+                        
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" value="@ViewBag.Name" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="description" name="description" rows="4">@ViewBag.Description</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="form-label">Hình ảnh</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="mt-2">
+                                <img src="@ViewBag.Image" alt="Current Image" class="img-thumbnail" style="max-width: 200px">
+                            </div>
+                            <small class="text-muted">Chỉ tải lên ảnh mới nếu muốn thay đổi</small>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-5">
+                                <i class="fas fa-save me-2"></i>Lưu thay đổi
+                            </button>
+                            <a href="/Category" class="btn btn-secondary px-5 ms-2">
+                                <i class="fas fa-times me-2"></i>Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

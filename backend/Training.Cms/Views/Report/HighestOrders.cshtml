@@ -1,0 +1,31 @@
+<h2>Đơn hàng có giá trị cao nhất</h2>
+
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tổng tiền</th>
+                <th>Tên sản phẩm</th>
+                <th>Hình ảnh</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.HighestOrders)
+            {
+                var id = item.GetType().GetProperty("Id").GetValue(item, null);
+                var totalPrice = item.GetType().GetProperty("TotalPrice").GetValue(item, null);
+                var productName = item.GetType().GetProperty("ProductName").GetValue(item, null);   
+                var productImage = item.GetType().GetProperty("ProductImage").GetValue(item, null);
+                <tr>
+                    <td>@id</td>
+                    <td>@totalPrice.ToString("N0") VNĐ</td>
+                    <td>@productName</td>
+                    <td>
+                        <img src="/public/image/@productImage" style="width: 100px; height: 100px; object-fit: cover;" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

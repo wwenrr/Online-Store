@@ -1,0 +1,5 @@
+{
+    "baseUrl": "https://api.hcmutssps.id.vn",
+    "baseUrlLocal": "http://localhost:8000",
+    "baseUrlHost": "https://api.hcmutssps.id.vn"
+}

@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "Sản phẩm tồn kho thấp";
+    var currentPage = (int)(ViewBag.page ?? 1);
+}
+
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Sản phẩm tồn kho thấp</h1>
+        <div class="border-bottom border-primary w-25 mx-auto my-3"></div>
+        <div class="mt-4">
+            <a href="/Report" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại trang báo cáo
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Đơn giá</th>
+                                    <th>Số lượng tồn kho</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.LowStockProducts != null)
+                                {
+                                    @foreach (var product in ViewBag.LowStockProducts)
+                                    {
+                                        var id = product.GetType().GetProperty("Id").GetValue(product, null);
+                                        var name = product.GetType().GetProperty("Name").GetValue(product, null);
+                                        var unitPrice = product.GetType().GetProperty("UnitPrice").GetValue(product, null);
+                                        var stockQuantity = product.GetType().GetProperty("StockQuantity").GetValue(product, null);
+                                        <tr>
+                                            <td>@id</td>
+                                            <td>@name</td>
+                                            <td>@unitPrice</td>
+                                            <td>@stockQuantity</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center mt-5">
+        <div class="me-3">
+            <a href="/Report/LowStock?page=@(currentPage - 1)" class="btn btn-outline-primary @(currentPage <= 1 ? "disabled" : "")">
+                <i class="fas fa-chevron-left"></i> Trang trước
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center mx-4">
+            <span class="me-2">Trang</span>
+            <input type="number" id="pageInput" class="form-control text-center" style="width: 70px" 
+                   min="1" value="@currentPage">
+        </div>
+
+        <div class="ms-3">
+            <a href="/Report/LowStock?page=@(currentPage + 1)" class="btn btn-outline-primary">
+                Trang sau <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('pageInput').addEventListener('change', function() {
+            var page = this.value;
+            if (page < 1) page = 1;
+            window.location.href = '/Report/LowStock?page=' + page;
+        });
+    </script>
+}

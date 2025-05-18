@@ -1,0 +1,78 @@
+services:
+  training.frontend:
+    image: ${DOCKER_REGISTRY-}trainingfrontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./fe-config.json:/config.json
+    depends_on:
+      - trainingapi
+      - training.cms
+
+  trainingapi:
+    image: ${DOCKER_REGISTRY-}trainingapi
+    env_file:
+      - ./.env.api
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./uploads:/uploads
+    depends_on:
+      - training.mysql
+
+  training.cms:
+    image: ${DOCKER_REGISTRY-}trainingcms
+    env_file:
+      - ./.env.cms
+    ports:
+      - "8080:8080"
+    depends_on:
+      - training.mysql
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./uploads:/uploads
+    restart: always
+
+  training.mysql:
+    container_name: Training.MySQL
+    environment:
+      MYSQL_ROOT_PASSWORD: Password@1234
+      MYSQL_DATABASE: test
+      MYSQL_PASSWORD: Password@1234
+    volumes:
+      - "trainingdocker_data:/var/lib/mysql"
+    image: mysql
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin
+      restart: always
+      environment:
+        PMA_HOST: training.mysql
+        PMA_USER: root
+        PMA_PASSWORD: Password@1234
+      ports:
+        - "8001:80"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "4444:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - training.cms
+      - trainingapi
+      - training.frontend
+
+volumes:
+  trainingdocker_data:
+    external: true

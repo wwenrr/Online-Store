@@ -1,0 +1,42 @@
+<h1 class="text-center mb-4">Đơn hàng hôm nay</h1>
+
+<div class="container">
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Khách hàng</th>
+                    <th>Nhân viên duyệt</th>
+                    <th>Thời gian</th>
+                    <th>Tổng tiền</th>
+                    <th>Sản phẩm</th>
+                    <th>Hình ảnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in ViewBag.TodayOrders)
+                {
+                    var id = order.GetType().GetProperty("Id").GetValue(order, null);
+                    var customerEmail = order.GetType().GetProperty("CustomerEmail").GetValue(order, null);
+                    var clerkEmail = order.GetType().GetProperty("ClerkEmail").GetValue(order, null);
+                    var createAt = order.GetType().GetProperty("CreateAt").GetValue(order, null);
+                    var totalPrice = order.GetType().GetProperty("TotalPrice").GetValue(order, null);
+                    var productName = order.GetType().GetProperty("ProductName").GetValue(order, null);
+                    var productImage = order.GetType().GetProperty("ProductImage").GetValue(order, null);
+                    <tr>
+                        <td>@id</td>
+                        <td>@customerEmail</td>
+                        <td>@clerkEmail</td>
+                        <td>@createAt.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@totalPrice.ToString("N0") đ</td>
+                        <td>@productName</td>
+                        <td>
+                            <img src="/public/image/@productImage" style="width: 50px; height: 50px; object-fit: cover;" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

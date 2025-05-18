@@ -1,0 +1,53 @@
+services:
+  training.api:
+    image: ${DOCKER_REGISTRY-}trainingapi
+    environment:
+      - ConnectionStrings__MyDatabase=server=host.docker.internal;user id=root;password=Password@1234;database=mydb
+      - AutoMigration=true
+    build:
+      context: ../
+      dockerfile: Training.Api/Dockerfile
+    depends_on:
+      - training.mysql
+    ports:
+      - "8000:8000"
+
+  training.cms:
+    image: ${DOCKER_REGISTRY-}trainingcms
+    environment:
+      - ConnectionStrings__MyDatabase=server=host.docker.internal;user id=root;password=Password@1234;database=mydb
+    build:
+      context: ../
+      dockerfile: Training.Cms/Dockerfile
+    depends_on:
+      - training.mysql
+    restart: always
+    ports:
+      - "8080:8080"
+
+  training.mysql:
+    container_name: Training.MySQL
+    environment:
+      MYSQL_ROOT_PASSWORD: Password@1234
+      MYSQL_DATABASE: test
+      MYSQL_PASSWORD: Password@1234
+    volumes:
+      - "data:/var/lib/mysql"
+    image: mysql
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin
+      restart: always
+      environment:
+        PMA_HOST: training.mysql
+        PMA_USER: root
+        PMA_PASSWORD: Password@1234
+      ports:
+        - "8001:80"
+
+volumes:
+  data:
+
