@@ -11,9 +11,14 @@ services:
 
   trainingapi:
     image: ${DOCKER_REGISTRY-}trainingapi
-    env_file:
-      - ./.env.api
     restart: always
+    environment:
+      ConnectionStrings__MyDatabase: server=trainingmysql;user id=root;password=Password@1234;database=mydb
+      AutoMigration: true
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8000
+      JWT_SECRET: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+      ADMIN_KEY: abcxyz_lmaolmaolmao
     ports:
       - "8000:8000"
     volumes:
@@ -21,24 +26,28 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ./uploads:/uploads
     depends_on:
-      - training.mysql
+      - trainingmysql
 
   training.cms:
     image: ${DOCKER_REGISTRY-}trainingcms
-    env_file:
-      - ./.env.cms
     ports:
       - "8080:8080"
+    environment:
+      ConnectionStrings__MyDatabase: server=trainingmysql;user id=root;password=Password@1234;database=mydb
+      AutoMigration: true
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8000
+      JWT_SECRET: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+      ADMIN_KEY: abcxyz_lmaolmaolmao
     depends_on:
-      - training.mysql
+      - trainingmysql
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ./uploads:/uploads
     restart: always
 
-  training.mysql:
-    container_name: Training.MySQL
+  trainingmysql:
     environment:
       MYSQL_ROOT_PASSWORD: Password@1234
       MYSQL_DATABASE: test
@@ -54,11 +63,22 @@ services:
       container_name: phpmyadmin
       restart: always
       environment:
-        PMA_HOST: training.mysql
+        PMA_HOST: trainingmysql
         PMA_USER: root
         PMA_PASSWORD: Password@1234
       ports:
         - "8001:80"
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      - "http://nginx:80"
+      - "--url=preferably-upright-walleye.ngrok-free.app"
+    environment:
+      NGROK_AUTHTOKEN: 2vYjT5j40edREjK6Qbpysfr5TyK_4qhEj643Y4rxNCHoM1wPo
+    ports:
+      - 4040:4040
 
   nginx:
     image: nginx:latest
